@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TOURISM</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+      box-sizing: border-box;
+      background-color: #C4C4C4;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: black;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+
+    select,
+    input[type="text"],
+    .export-btn {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      max-width: 280px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .export-btn {
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .export-btn:hover {
+      background-color: #1558b0;
+    }
+
+    #output {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background-color: #F2F0EF;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 16px;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: black;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 6px;
+    }
+
+    .card ul {
+      list-style-type: disc;
+      padding-left: 20px;
+      margin: 0;
+    }
+
+    .card li {
+      margin-bottom: 6px;
+    }
+
+    .place-link {
+      text-decoration: none;
+      color: #1a73e8;
+      transition: color 0.2s;
+    }
+
+    .place-link:hover {
+      color: #0b50c2;
+    }
+  </style>
+</head>
+<body>
+  <h1>TOURISM</h1>
+
+  <div class="controls">
+    <select id="citySelect"></select>
+    <input type="text" id="searchInput" placeholder="Type to search...">
+    <button class="export-btn" onclick="exportData()">Export to JSON</button>
+  </div>
+
+  <div id="output"></div>
+
+  <script>
+    const data = {
+      BANGALORE: {
+        Malls: [
+          "Phoenix Market City", "VR Bengaluru", "Park Square Mall", "Nexus Shantiniketan Mall", "Brookefield Mall",
+          "KLM Fashion Mall", "Soul Space Spirit Centro Mall", "Gopalan Signature Mall, Old Madras Road",
+          "Orion East Mall, Banaswadi", "Mantri Square Mall", "UB City", "Orion Mall, Rajaji Nagar",
+          "Gopalan Grand Mall, Old Madras Road", "Gopalan Innovation Mall, Bannerghatta Road", "Royal Meenakshi Mall",
+          "Orion Uptown Mall, Old Madras Road", "1 MG Lido Mall", "Lulu Mall", "GT World Mall", "Vega City Mall",
+          "Gopalan Arcade Mall, Rajarajeshwari Nagar - Metro", "Nexus Mall, Koramangala", "Bhartiya Mall Of Bengaluru",
+          "Phoenix Mall Of Asia", "Virginia Mall", "Garuda Mall, Magrath Road - Metro", "Forum South Bengaluru - Metro",
+          "Market Square Mall, Koramangala", "ETA Namma Mall - Metro", "RMZ Galleria Mall",
+          "Bangalore Central Mall - Metro", "Esteem Mall", "Gopalan Mall, Ashok Nagar",
+          "Elegance Mantri Mall, Bannerghatta Road", "Elements Mall", "Garuda Mall, Yelahanka"
+        ],
+        "Famous Places": [
+          "Holy Trinity Church", "St.Mary's Basilica", "Ulsoor Lake", "Lalbagh Botanical Garden", "Cubbon Park",
+          "Mahatma Gandhi(MG) Road", "Richards Park", "Commercial Street", "Vidhana Soudha", "Bangalore Palace",
+          "The Heritage Centre & Aerospace Museum", "Karnataka High Court", "Wonderla Bengaluru", "Bangalore Fort",
+          "Tipu Sultan Summer Palace", "KR Market", "Jawaharlal Nehru Planetarium",
+          "Visvesvaraya Industrial and Technological Museum", "Indian Military Museum", "Chickpet", "Snow City",
+          "Bannerghatta National Park"
+        ]
+      },
+      CHENNAI: {
+        Malls: [
+          "Express Avenue", "Nexus Vijaya Mall", "Phoenix Market City", "Spencer Plaza", "Grand Square Mall",
+          "The Marina Mall", "Vivara Mall", "Chandra Metro Mall", "Spectrum The Grand Venus Mall",
+          "Grand Galada Centre Mall", "Ramee Mall", "Chennai Citi Centre", "Abirami Mega Mall", "Ampa SkyOne",
+          "Aerohub East", "VR Chennai", "BSR Mall"
+        ],
+        "Famous Places": [
+          "Besant Nagar Beach", "Marina Beach", "Santhome Church", "T.Nagar", "Sowcarpet",
+          "MC Road, Washermenpet", "Parrys Corner", "Kathipara Urban Square", "Guindy Snake Park",
+          "Guindy Children's Park", "Queens Land", "Chennai Rail Museum", "Light House",
+          "St. Thomas Mount National Shrine", "Fort St.George", "Chetpet EcoPark", "St.Antony's Church",
+          "Anna Nagar Tower Park", "Kovalam Beach", "Semmozhi Poonga", "Mahabalipuram", "Burma Bazaar",
+          "Madras High Court", "Rippon Building", "Annai Velankanni Shrine", "Raj Bhavan", "Broken Bridge",
+          "Panagal Park", "Government Museum", "Gandhi Mandapam", "Fort Museum", "Birla Planetarium",
+          "Madras War Cemetery", "Valluvar Kottam Monument", "Muttukadu Boating",
+          "Dakshina Chitra Heritage Museum", "Chembarambakkam Lake", "Kasimedu Beach", "Anna Centenary Library",
+          "Maadi Poonga", "Island Grounds", "Connemera Library", "Mint Park", "VGP Wonder World", "MGM",
+          "VGP Universal Kingdom", "Arignar Anna Zoological Park", "VGP Snow kingdom", "VGP Golden Beach",
+          "VGP Marine Kingdom"
+        ]
+      },
+      "OTHER LOCATIONS": {
+        "Visited Places": [
+          "Puducherry", "Mysuru", "Nellore", "Kavali", "Singarayakonda", "Srirangapatna",
+          "Maddur", "Mandya", "Villiyanur"
+        ]
+      }
+    };
+
+    const citySelect = document.getElementById("citySelect");
+    const searchInput = document.getElementById("searchInput");
+    const output = document.getElementById("output");
+
+    Object.keys(data).forEach(city => {
+      const option = document.createElement("option");
+      option.value = city;
+      option.textContent = city;
+      citySelect.appendChild(option);
+    });
+
+    citySelect.addEventListener("change", () => renderCity(citySelect.value, searchInput.value));
+    searchInput.addEventListener("input", () => renderCity(citySelect.value, searchInput.value));
+
+    function renderCity(selectedCity, searchTerm = "") {
+      output.innerHTML = "";
+
+      Object.entries(data).forEach(([city, categories]) => {
+        if (selectedCity !== city && selectedCity !== "") return;
+
+        const cityCard = document.createElement("div");
+        cityCard.className = "card";
+
+        const cityTitle = document.createElement("h1");
+        cityTitle.textContent = city;
+        cityCard.appendChild(cityTitle);
+
+        for (const [category, places] of Object.entries(categories)) {
+          const filtered = places.filter(place =>
+            place.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+
+          if (filtered.length > 0) {
+            const heading = document.createElement("h2");
+            heading.textContent = category;
+            cityCard.appendChild(heading);
+
+            const list = document.createElement("ul");
+            filtered.forEach(place => {
+              const item = document.createElement("li");
+              const link = document.createElement("a");
+              link.href = `https://www.google.com/maps/search/${encodeURIComponent(place + ", " + city)}`;
+              link.target = "_blank";
+              link.textContent = place;
+              link.className = "place-link";
+              item.appendChild(link);
+              list.appendChild(item);
+            });
+
+            cityCard.appendChild(list);
+          }
+        }
+
+        output.appendChild(cityCard);
+      });
+    }
+
+    function exportData() {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "places-data.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    renderCity("BANGALORE");
+  </script>
+</body>
+</html>
